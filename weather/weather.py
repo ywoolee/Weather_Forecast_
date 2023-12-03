@@ -1,6 +1,7 @@
 from tkinter import *
 import requests
 import bs4
+import re
 root = Tk()
 
 canvas = Canvas(root, height=600, width=800)
@@ -12,16 +13,19 @@ L.place(relwidth=1, relheight=1)
 
 
 frame_L = Frame(root, bg='#4a4641', bd=6)
-frame_L.place(relx=0.5, rely=0, relwidth=0.5, relheight=0.1, anchor='n')
+frame_L.place(relx=0.5, rely=0.02, relwidth=0.5, relheight=0.1, anchor='n')
+
+frame = Frame(root, bg='#4a4641', bd=6)
+frame.place(relx=0.5, rely=0.14, relwidth=0.92, relheight=0.1, anchor='n')
+
+frame1 = Frame(root,bg='#4a4641',bd=6)
+frame1.place(relx=0.5, rely=0.26, relwidth=0.92, relheight=0.1, anchor='n')
+
+frame2 = Frame(root, bg='#4a4641', bd=8)
+frame2.place(relx=0.5, rely=0.38, relwidth=0.92, relheight=0.5, anchor='n')
 
 l_1=Label(frame_L,text="날씨",font=('calibre',16,'italic'),bg='white')
 l_1.place(relwidth=1, relheight=1)
-
-frame = Frame(root, bg='#4a4641', bd=6)
-frame.place(relx=0.5, rely=0.12, relwidth=0.92, relheight=0.1, anchor='n')
-
-frame1 = Frame(root,bg='#4a4641',bd=6)
-frame1.place(relx=0.5, rely=0.24, relwidth=0.92, relheight=0.1, anchor='n')
 
 l=Label(frame1,text="날씨를 조회할 날을 선택하세요. >>>>",font=('calibre',16,'italic'),bg='white')
 l.place(relwidth=0.69, relheight=1)
@@ -33,10 +37,7 @@ e1 = Entry(frame,font=('calibre',16,'italic'),justify=CENTER)
 e1.place(relwidth=0.69, relheight=1)
 e1.insert(0,"조회할 도시의 이름을 입력하세요.")
 
-frame2 = Frame(root, bg='#4a4641', bd=8)
-frame2.place(relx=0.5, rely=0.36, relwidth=0.92, relheight=0.5, anchor='n')
-
-l2=Label(frame2,text="",font=('calibre',15,'bold'),bg='white',anchor='c')
+l2=Label(frame2,text="",font=('calibre',15,'bold'),bg='white',anchor='n')
 l2.place(relwidth=0.5, relheight=1)
 
 lw=Label(frame2,text="",bg='white',anchor='c')
@@ -90,9 +91,16 @@ def weather():
         w=weathercondition[0].text
         temp=temperature[0].text
         rainprobability = rainprobability[0].text
+        d= re.sub(r'[^0-9]', '', rainprobability)
+        rain = int(d)
         
-        a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s"%(cityname,t,w,temp,rainprobability)
+        if (rain>=50):
+            a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n비또는 눈이 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
+        else:
+            a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s"%(cityname,t,w,temp,rainprobability)
         
+        
+      
         l2.config(text=a)
         
         print(a)
@@ -104,11 +112,11 @@ def weather():
             img2=PhotoImage(file="3.png")
         elif(w=='이슬비'):
             img2=PhotoImage(file="4.png")
-        elif(w=='비'or w=='뇌우(약함, 비 동반)' or w=='비바람'):
+        elif(w=='비'or w=='뇌우(약함, 비 동반)' or w=='비바람' or w=='소나기'):
             img2=PhotoImage(file="9.png")
         elif(w=='비와 눈'):
             img2=PhotoImage(file="5.png")
-        elif(w=='눈'):
+        elif(w=='눈' or w=='소낙눈'):
             img2=PhotoImage(file="6.png")
         elif(w=='바람'):
             img2=PhotoImage(file="7.png")
@@ -129,3 +137,6 @@ button = Button(frame, text="조회", font=('calibre',16,'italic'), command=weat
 button.place(relx=0.7, relheight=1, relwidth=0.3)
 
 root.mainloop()
+
+
+
