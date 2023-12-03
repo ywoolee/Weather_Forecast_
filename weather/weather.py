@@ -12,8 +12,8 @@ L=Label(root)
 L.place(relwidth=1, relheight=1)
 
 
-frame_L = Frame(root, bg='#4a4641', bd=6)
-frame_L.place(relx=0.5, rely=0.02, relwidth=0.5, relheight=0.1, anchor='n')
+frame_title = Frame(root, bg='#4a4641', bd=6)
+frame_title.place(relx=0.5, rely=0.02, relwidth=0.5, relheight=0.1, anchor='n')
 
 frame = Frame(root, bg='#4a4641', bd=6)
 frame.place(relx=0.5, rely=0.14, relwidth=0.92, relheight=0.1, anchor='n')
@@ -24,7 +24,15 @@ frame1.place(relx=0.5, rely=0.26, relwidth=0.92, relheight=0.1, anchor='n')
 frame2 = Frame(root, bg='#4a4641', bd=8)
 frame2.place(relx=0.5, rely=0.38, relwidth=0.92, relheight=0.5, anchor='n')
 
-l_1=Label(frame_L,text="날씨",font=('calibre',16,'italic'),bg='white')
+frame3 = Frame(root, bg='#4a4641', bd=8)
+frame3.place(relx=0.17, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
+
+frame4 = Frame(root, bg='#4a4641', bd=8)
+frame4.place(relx=0.83, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
+
+
+
+l_1=Label(frame_title,text="날씨",font=('calibre',16,'italic'),bg='white')
 l_1.place(relwidth=1, relheight=1)
 
 l=Label(frame1,text="날씨를 조회할 날을 선택하세요. >>>>",font=('calibre',16,'italic'),bg='white')
@@ -42,8 +50,6 @@ l2.place(relwidth=0.5, relheight=1)
 
 lw=Label(frame2,text="",bg='white',anchor='c')
 lw.place(relx=0.5,relwidth=0.5, relheight=1)
-
-
 
 
 
@@ -94,8 +100,12 @@ def weather():
         d= re.sub(r'[^0-9]', '', rainprobability)
         rain = int(d)
         
-        if (rain>=50):
-            a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n비또는 눈이 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
+        if (w=='이슬비' or w=='비'or w=='뇌우(약함, 비 동반)' or w=='비바람' or w=='소나기' or w=='뇌우(비 동반)' or w=='광역성 뇌우'or w=='국지성 뇌우'):
+            a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n비가 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
+        elif(w=='눈' or w=='소낙눈'):
+            a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n눈이 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
+        elif(w=='비와 눈'):
+            a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n비와 눈이 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
         else:
             a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s"%(cityname,t,w,temp,rainprobability)
         
@@ -135,6 +145,19 @@ def weather():
 
 button = Button(frame, text="조회", font=('calibre',16,'italic'), command=weather)
 button.place(relx=0.7, relheight=1, relwidth=0.3)
+
+def outfit():
+    global new
+    new = Toplevel()
+
+button = Button(frame3, text="오늘의 옷 추천", font=('calibre',16,'italic'), command=outfit)
+button.place(relheight=1, relwidth=1)
+
+def out():
+    root.destroy()
+
+button = Button(frame4, text="종료", font=('calibre',16,'italic'), command=out)
+button.place(relheight=1, relwidth=1)
 
 root.mainloop()
 
