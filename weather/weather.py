@@ -2,54 +2,72 @@ from tkinter import *
 import requests
 import bs4
 import re
+from webdriver_manager.chrome import ChromeDriverManager
+#내부적으로 최신버전의 크롬드라이버를 이용, 캐시값을 이용해서 크롬을 불러옴 ->크롬드라이버 따로 업데이트 안해도됨
+from selenium import webdriver 
+from selenium.webdriver.common.by import By 
+from selenium.webdriver.chrome.service import Service
+import time
 root = Tk()
 
-canvas = Canvas(root, height=600, width=800)
+
+
+
+canvas = Canvas(root, height=600, width=800, bg='lightgray')
 canvas.pack()
 
+root.title("Weather Forecast")
 
-L=Label(root)
-L.place(relwidth=1, relheight=1)
-
-
-frame_title = Frame(root, bg='#4a4641', bd=6)
+frame_title = Frame(root, bg='slategrey', bd=3)
 frame_title.place(relx=0.5, rely=0.02, relwidth=0.5, relheight=0.1, anchor='n')
 
-frame = Frame(root, bg='#4a4641', bd=6)
+frame = Frame(root, bg='slategrey', bd=3)
 frame.place(relx=0.5, rely=0.14, relwidth=0.92, relheight=0.1, anchor='n')
 
-frame1 = Frame(root,bg='#4a4641',bd=6)
+frame1 = Frame(root,bg='slategrey',bd=3)
 frame1.place(relx=0.5, rely=0.26, relwidth=0.92, relheight=0.1, anchor='n')
 
-frame2 = Frame(root, bg='#4a4641', bd=8)
+frame2 = Frame(root, bg='slategrey', bd=3)
 frame2.place(relx=0.5, rely=0.38, relwidth=0.92, relheight=0.5, anchor='n')
 
-frame3 = Frame(root, bg='#4a4641', bd=8)
-frame3.place(relx=0.17, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
+frame3 = Frame(root, bg='slategrey', bd=3)
+frame3.place(relx=0.22, rely=0.89, relwidth=0.36, relheight=0.09, anchor='n')
 
-frame4 = Frame(root, bg='#4a4641', bd=8)
+frame4 = Frame(root, bg='slategrey', bd=3)
 frame4.place(relx=0.83, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
 
 
+l_title=Label(frame_title,text="일기예보",font=('나눔 고딕',16,'bold'),bg='white')
+l_title.place(relwidth=1, relheight=1)
 
-l_1=Label(frame_title,text="날씨",font=('calibre',16,'italic'),bg='white')
-l_1.place(relwidth=1, relheight=1)
+l1=Label(frame1,text="날씨를 조회할 날을 선택하세요.",font=('나눔 고딕',16,'bold'),bg='white')
+l1.place(relwidth=0.695, relheight=1)
 
-l=Label(frame1,text="날씨를 조회할 날을 선택하세요. >>>>",font=('calibre',16,'italic'),bg='white')
-l.place(relwidth=0.69, relheight=1)
-
-s = Spinbox(frame1,values=('오늘',"내일",'2일 후', '3일 후', '4일 후','5일 후'), width = 4, font=('calibre',16,'italic'),justify=CENTER)
+s = Spinbox(frame1,values=('오늘',"내일",'2일 후', '3일 후','4일 후'), width = 4, font=('나눔 고딕',16,'bold'),justify=CENTER)
 s.place(relx=0.7, relheight=1, relwidth=0.3)
 
-e1 = Entry(frame,font=('calibre',16,'italic'),justify=CENTER)
-e1.place(relwidth=0.69, relheight=1)
-e1.insert(0,"조회할 도시의 이름을 입력하세요.")
+def entry_focus_in(event):
+    if entry1.get() == "도시의 이름을 입력하세요.":
+        entry1.delete(0,'end')
+        entry1.config(fg="black")
+def entry_focus_out(event):
+    if entry1.get() == " ":
+        entry1.insert(0,"도시의 이름을 입력하세요.")
+        entry1.config(fg="gray")
 
-l2=Label(frame2,text="",font=('calibre',15,'bold'),bg='white',anchor='n')
+entry1 = Entry(frame,font=('나눔 고딕',16,'bold'),justify=CENTER,fg='gray')
+entry1.place(relwidth=0.695, relheight=1)
+entry1.insert(0,"도시의 이름을 입력하세요.")
+entry1.bind("<FocusIn>", entry_focus_in)
+entry1.bind("<FocusOut>", entry_focus_out)
+
+    
+
+l2=Label(frame2,text="",font=('나눔 고딕',15,'bold'),bg='white',anchor='n')
 l2.place(relwidth=0.5, relheight=1)
 
-lw=Label(frame2,text="",bg='white',anchor='c')
-lw.place(relx=0.5,relwidth=0.5, relheight=1)
+l3=Label(frame2,text="",bg='white',anchor='c')
+l3.place(relx=0.5,relwidth=0.5, relheight=1)
 
 
 
@@ -57,30 +75,40 @@ def weather():
     global l2
     global cityname
     global days
-    global lw
-    cityname=e1.get()
+    global l3
+    cityname=entry1.get()
     if cityname=='':
-        print("Enter city name")
+        print("도시의 이름을 입력하세요.")
     else:
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--start-maximized')
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options = chrome_options)
+
+        url_weather= 'https://search.naver.com/search.naver?where=nexearch&sm=top_&fbm=0&ie=utf8&query=%s+날씨'%(cityname)
+        driver.get(url=url_weather)
+        driver.execute_script("window.scrollTo(0, 300)")
+
+        path = 'C:/Users/user/Desktop/weather/weekly.jpg'
+        element = driver.find_element(By.CSS_SELECTOR, '.weekly_forecast_area._toggle_panel')
+        element.screenshot(path)
+        
         if(s.get()=='오늘'):
             days="오늘"
         elif(s.get()=='내일'):
             days="내일"
         elif(s.get()=='2일 후'):
-            days="2일 후"
+            days="2일+후"
         elif(s.get()=='3일 후'):
-            days="3일 후"
-        elif(s.get()=='3일 후'):
-            days="3일 후"
-        elif(s.get()=='3일 후'):
-            days="3일 후"            
+            days="3일+후"
+        elif(s.get()=='4일 후'):
+            days="4일+지난+후"            
         else:
             days=s.get()
 
-        url='https://www.google.com/search?q=%s+weather+%s'%(cityname,days)
+        url='https://www.google.com/search?q=%s+%s+날씨'%(cityname,days)
+        
 
-        headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36',}
-        css='#wob_tm'
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         
         request=requests.get(url,headers=headers)
         request.raise_for_status()
@@ -104,7 +132,7 @@ def weather():
             a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n비가 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
         elif(w=='눈' or w=='소낙눈'):
             a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n눈이 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
-        elif(w=='비와 눈'):
+        elif(w=='비와 눈' or w=='비온 후 밤에 눈' or w=='눈온 후 밤에 비'):
             a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s \n\n비와 눈이 오니 우산을 챙기세요!!"%(cityname,t,w,temp,rainprobability)
         else:
             a="Location: %s\n\nDay: %s\n\n날씨: %s\n\n기온: %s 도\n\n강수확률: %s"%(cityname,t,w,temp,rainprobability)
@@ -126,7 +154,7 @@ def weather():
             img2=PhotoImage(file="9.png")
         elif(w=='비와 눈'):
             img2=PhotoImage(file="5.png")
-        elif(w=='눈' or w=='소낙눈'):
+        elif(w=="눈" or w=='소낙눈'):
             img2=PhotoImage(file="6.png")
         elif(w=='바람'):
             img2=PhotoImage(file="7.png")
@@ -135,31 +163,39 @@ def weather():
         elif(w=='광역성 뇌우'or w=='국지성 뇌우'):
             img2=PhotoImage(file="10.png")
         else:
-            img2=PhotoImage(file="whitebox.png")
+            l3=Label(frame2,text="이미지가 없습니다",bg='white',anchor='c')
+            l3.place(relx=0.5,relwidth=0.5, relheight=1)
         
         
-        lw=Label(frame2,image = img2,bg='white',anchor='c')
-        lw.image = img2
-        lw.place(relx=0.5,relwidth=0.5, relheight=1)
+        l3=Label(frame2,image = img2,bg='white',anchor='c')
+        l3.image = img2
+        l3.place(relx=0.5,relwidth=0.5, relheight=1)
 
 
-button = Button(frame, text="조회", font=('calibre',16,'italic'), command=weather)
+button = Button(frame, text="검색", font=('나눔 고딕',16,'bold'), command=weather)
 button.place(relx=0.7, relheight=1, relwidth=0.3)
 
-def outfit():
-    global new
-    new = Toplevel()
 
-button = Button(frame3, text="오늘의 옷 추천", font=('calibre',16,'italic'), command=outfit)
+
+def weekly():
+    global week
+    week = Toplevel(root)
+    week.title("Weekly Weather")
+    week.geometry("400x500+1000+250")
+    a=""
+    msg = Message(week,font=('나눔 고딕',16,'bold'),text=a)
+    msg.pack()
+    
+    
+button = Button(frame3, text="주간 날씨", font=('나눔 고딕',16,'bold'), command=weekly)
 button.place(relheight=1, relwidth=1)
 
-def out():
+
+
+def quit_():
     root.destroy()
 
-button = Button(frame4, text="종료", font=('calibre',16,'italic'), command=out)
+button = Button(frame4, text="종료", font=('나눔 고딕',16,'bold'), command=quit_)
 button.place(relheight=1, relwidth=1)
 
 root.mainloop()
-
-
-
