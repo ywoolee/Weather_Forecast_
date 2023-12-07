@@ -179,12 +179,22 @@ button.place(relx=0.7, relheight=1, relwidth=0.3)
 
 def weekly():
     global week
-    week = Toplevel(root)
-    week.title("Weekly Weather")
-    week.geometry("400x500+1000+250")
-    a=""
-    msg = Message(week,font=('나눔 고딕',16,'bold'),text=a)
-    msg.pack()
+    global label_week
+    top = Toplevel()
+    top.title("Weekly Weather")
+    top.geometry("700x500")
+    frame_week = Frame(top, bg='slategrey', bd=3)
+    frame_week.place(relx=0.5, rely=0.025, relwidth=0.95, relheight=0.85, anchor='n')
+    image_week = PhotoImage(file="weekly.jpg")
+    label_week=Label(frame_week,image =image_week ,bg='white',anchor='c')
+    label_week.image = image_week
+    label_week.place(relx=0,relwidth=1, relheight=1)
+    frame2 = Frame(top, bg='slategrey', bd=3)
+    frame2.place(relx=0.845, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
+    button = Button(frame2, text="종료", font=('나눔 고딕',16,'bold'), command=top.destroy)
+    button.place(relheight=1, relwidth=1)
+    
+    
     
     
 button = Button(frame3, text="주간 날씨", font=('나눔 고딕',16,'bold'), command=weekly)
