@@ -7,29 +7,29 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.chrome.service import Service
 import time
-root = Tk()
-root.resizable(False, False)
+main = Tk()
+main.resizable(False, False)
 
-root.geometry("900x600+200+250")
+main.geometry("900x600+200+250")
 
-root.title("Weather Forecast")
+main.title("Weather Forecast")
 
-frame_title = Frame(root, bg='slategrey', bd=3)
+frame_title = Frame(main, bg='slategrey', bd=3)
 frame_title.place(relx=0.5, rely=0.02, relwidth=0.5, relheight=0.1, anchor='n')
 
-frame = Frame(root, bg='slategrey', bd=3)
+frame = Frame(main, bg='slategrey', bd=3)
 frame.place(relx=0.5, rely=0.14, relwidth=0.92, relheight=0.1, anchor='n')
 
-frame1 = Frame(root,bg='slategrey',bd=3)
+frame1 = Frame(main,bg='slategrey',bd=3)
 frame1.place(relx=0.5, rely=0.26, relwidth=0.92, relheight=0.1, anchor='n')
 
-frame2 = Frame(root, bg='slategrey', bd=3)
+frame2 = Frame(main, bg='slategrey', bd=3)
 frame2.place(relx=0.5, rely=0.38, relwidth=0.92, relheight=0.5, anchor='n')
 
-frame3 = Frame(root, bg='slategrey', bd=3)
+frame3 = Frame(main, bg='slategrey', bd=3)
 frame3.place(relx=0.22, rely=0.89, relwidth=0.36, relheight=0.09, anchor='n')
 
-frame4 = Frame(root, bg='slategrey', bd=3)
+frame4 = Frame(main, bg='slategrey', bd=3)
 frame4.place(relx=0.83, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
 
 
@@ -73,8 +73,19 @@ def weather():
     global days
     global l3
     cityname=entry1.get()
-    if cityname=='':
-        print("")
+    if cityname == "도시의 이름을 입력하세요." or cityname == "":
+        top = Toplevel()
+        top.title("Wrong Input")
+        top.resizable(False, False)
+        top.geometry("350x100+500+500")
+        frame_error = Frame(top, bg='slategrey', bd=3)
+        frame_error.place(relx=0.5, rely=0.025, relwidth=0.95, relheight=0.5, anchor='n')
+        label = Label(frame_error, text="도시이름을 먼저 입력해주세요",font=('나눔 고딕',16,'bold'))
+        label.place(relheight=1, relwidth=1)
+        frame_error2 = Frame(top, bg='slategrey', bd=3)
+        frame_error2.place(relx=0.5, rely=0.56, relwidth=0.5, relheight=0.4, anchor='n')
+        button = Button(frame_error2, text="확인",bg='lightsteelblue', font=('나눔 고딕',16,'bold'), command=top.destroy)
+        button.place(relheight=1, relwidth=1)
     else:
 
         
@@ -220,9 +231,9 @@ button.place(relheight=1, relwidth=1)
 
 
 def quit_():
-    root.destroy()
+    main.destroy()
 
 button = Button(frame4, text="종료", font=('나눔 고딕',16,'bold'), command=quit_)
 button.place(relheight=1, relwidth=1)
 
-root.mainloop()
+main.mainloop()
