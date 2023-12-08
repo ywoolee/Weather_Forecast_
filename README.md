@@ -40,7 +40,6 @@ request.text를 이용해 가져온 데이터는 사이트의 텍스트형태의
 
 ### 📌 주요 기능
 
-사진
 ![main](https://github.com/EndlessCreation/Web_basic_study_2021-1/assets/68912105/a044e495-8b53-49a4-aee7-1897ffa0df95)
 ![result](https://github.com/EndlessCreation/Web_basic_study_2021-1/assets/68912105/ad994fba-e9f2-40b3-a8c1-8662238eced7)
 ![weekly](https://github.com/EndlessCreation/Web_basic_study_2021-1/assets/68912105/971f58ac-a1db-46c3-a11d-17bf5a3a50f2)
