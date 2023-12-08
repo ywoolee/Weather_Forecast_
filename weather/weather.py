@@ -1,20 +1,16 @@
 from tkinter import *
 import requests
-import bs4
+from bs4 import BeautifulSoup
 import re
 from webdriver_manager.chrome import ChromeDriverManager
-#내부적으로 최신버전의 크롬드라이버를 이용, 캐시값을 이용해서 크롬을 불러옴 ->크롬드라이버 따로 업데이트 안해도됨
 from selenium import webdriver 
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.chrome.service import Service
 import time
 root = Tk()
+root.resizable(False, False)
 
-
-
-
-canvas = Canvas(root, height=600, width=800, bg='lightgray')
-canvas.pack()
+root.geometry("900x600+200+250")
 
 root.title("Weather Forecast")
 
@@ -78,19 +74,9 @@ def weather():
     global l3
     cityname=entry1.get()
     if cityname=='':
-        print("도시의 이름을 입력하세요.")
+        print("")
     else:
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--start-maximized')
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options = chrome_options)
 
-        url_weather= 'https://search.naver.com/search.naver?where=nexearch&sm=top_&fbm=0&ie=utf8&query=%s+날씨'%(cityname)
-        driver.get(url=url_weather)
-        driver.execute_script("window.scrollTo(0, 300)")
-
-        path = 'C:/Users/user/Desktop/weather/weekly.jpg'
-        element = driver.find_element(By.CSS_SELECTOR, '.weekly_forecast_area._toggle_panel')
-        element.screenshot(path)
         
         if(s.get()=='오늘'):
             days="오늘"
@@ -112,7 +98,7 @@ def weather():
         
         request=requests.get(url,headers=headers)
         request.raise_for_status()
-        soup=bs4.BeautifulSoup(request.text,"html.parser")
+        soup=BeautifulSoup(request.text,"html.parser")
 
         temperature=soup.select('#wob_tm')  
         timedate=soup.select('#wob_dts')  
@@ -178,21 +164,52 @@ button.place(relx=0.7, relheight=1, relwidth=0.3)
 
 
 def weekly():
-    global week
-    global label_week
-    top = Toplevel()
-    top.title("Weekly Weather")
-    top.geometry("700x500")
-    frame_week = Frame(top, bg='slategrey', bd=3)
-    frame_week.place(relx=0.5, rely=0.025, relwidth=0.95, relheight=0.85, anchor='n')
-    image_week = PhotoImage(file="weekly.jpg")
-    label_week=Label(frame_week,image =image_week ,bg='white',anchor='c')
-    label_week.image = image_week
-    label_week.place(relx=0,relwidth=1, relheight=1)
-    frame2 = Frame(top, bg='slategrey', bd=3)
-    frame2.place(relx=0.845, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
-    button = Button(frame2, text="종료", font=('나눔 고딕',16,'bold'), command=top.destroy)
-    button.place(relheight=1, relwidth=1)
+    global cityname
+    cityname=entry1.get()
+    if cityname == "도시의 이름을 입력하세요." or cityname == "":
+        top = Toplevel()
+        top.title("Wrong Input")
+        top.resizable(False, False)
+        top.geometry("350x100+500+500")
+        frame_error = Frame(top, bg='slategrey', bd=3)
+        frame_error.place(relx=0.5, rely=0.025, relwidth=0.95, relheight=0.5, anchor='n')
+        label = Label(frame_error, text="도시이름을 먼저 입력해주세요",font=('나눔 고딕',16,'bold'))
+        label.place(relheight=1, relwidth=1)
+        frame_error2 = Frame(top, bg='slategrey', bd=3)
+        frame_error2.place(relx=0.5, rely=0.56, relwidth=0.5, relheight=0.4, anchor='n')
+        button = Button(frame_error2, text="확인",bg='lightsteelblue', font=('나눔 고딕',16,'bold'), command=top.destroy)
+        button.place(relheight=1, relwidth=1)
+
+            
+    else:
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--start-maximized')
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options = chrome_options)
+
+        url_weather= 'https://search.naver.com/search.naver?where=nexearch&sm=top_&fbm=0&ie=utf8&query=%s+날씨'%(cityname)
+        driver.get(url=url_weather)
+        driver.execute_script("window.scrollTo(0, 350)")
+        path = 'C:/Users/user/Desktop/weather/weekly.jpg'
+        element = driver.find_element(By.CSS_SELECTOR, '.weekly_forecast_area._toggle_panel, .weekly_forecast_area._weekly_forecast')
+        element.screenshot(path)
+        top = Toplevel()
+        top.title("Weekly Weather")
+        top.resizable(False, False)
+        top.geometry("700x500+400+250")
+        frame_week = Frame(top, bg='slategrey', bd=3)
+        frame_week.place(relx=0.5, rely=0.025, relwidth=0.95, relheight=0.85, anchor='n')
+        image_week = PhotoImage(file="weekly.jpg")
+        label_week=Label(frame_week,image =image_week ,bg='white',anchor='c')
+        label_week.image = image_week
+        label_week.place(relx=0,relwidth=1, relheight=1)
+        frame2 = Frame(top, bg='slategrey', bd=3)
+        frame2.place(relx=0.845, rely=0.89, relwidth=0.26, relheight=0.09, anchor='n')
+        button = Button(frame2, text="종료", font=('나눔 고딕',16,'bold'), command=top.destroy)
+        button.place(relheight=1, relwidth=1)
+            
+        
+        
+    
     
     
     
